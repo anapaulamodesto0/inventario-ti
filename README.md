@@ -73,3 +73,11 @@ Protótipo funcional em desenvolvimento e validação.
 Contexto
 
 Projeto acadêmico de desenvolvimento de software, com foco na organização e no controle de equipamentos de TI.
+
+## Revisão técnica do MVP
+
+A revisão técnica do Sistema de Inventário de TI contempla a organização do código, a legibilidade, a manutenção e a segurança da aplicação.
+
+Os principais pontos de atenção são a validação dos dados cadastrados, o controle de acesso dos usuários, a proteção das informações e a rastreabilidade das movimentações de equipamentos.
+
+As melhorias identificadas serão registradas e acompanhadas por meio de commits e Pull Requests, antes da integração à branch principal.
