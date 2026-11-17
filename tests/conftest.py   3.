@@ -93,3 +93,4 @@ def banco_temporario(tmp_path, monkeypatch):
 
     # Retornar o caminho do banco temporario
     return caminho
+
