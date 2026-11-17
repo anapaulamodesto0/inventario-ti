@@ -1,0 +1,179 @@
+
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<section class="pagina-administrativa">
+
+    {% set editando = equipamento and equipamento.id_equipamento %}
+
+    {% if editando %}
+
+        <h1>Editar Equipamento</h1>
+        <p>Atualize os dados do equipamento selecionado.</p>
+
+    {% else %}
+
+        <h1>Cadastro de Equipamentos</h1>
+        <p>Registre um novo equipamento no inventário.</p>
+
+    {% endif %}
+
+    <div class="painel-formulario">
+
+        <h2>Informações do equipamento</h2>
+
+        {% if erro %}
+
+        <div class="mensagem-erro" role="alert">
+            {{ erro }}
+        </div>
+
+        {% endif %}
+
+        <form method="POST">
+
+            <div class="grade-formulario">
+
+                <div class="campo">
+
+                    <label for="patrimonio">
+                        Patrimônio *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="patrimonio"
+                        name="patrimonio"
+                        maxlength="50"
+                        value="{{ equipamento.patrimonio if equipamento else '' }}"
+                        required
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label for="tipo">
+                        Tipo de equipamento *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="tipo"
+                        name="tipo"
+                        maxlength="100"
+                        placeholder="Ex.: Notebook, Monitor"
+                        value="{{ equipamento.tipo if equipamento else '' }}"
+                        required
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label for="modelo">Modelo *</label>
+
+                    <input
+                        type="text"
+                        id="modelo"
+                        name="modelo"
+                        maxlength="100"
+                        value="{{ equipamento.modelo if equipamento else '' }}"
+                        required
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label for="numero_serie">
+                        Número de série
+                    </label>
+
+                    <input
+                        type="text"
+                        id="numero_serie"
+                        name="numero_serie"
+                        maxlength="100"
+                        value="{{ (equipamento.numero_serie or '') if equipamento else '' }}"
+                    >
+
+                </div>
+
+                <div class="campo campo-largura-total">
+
+                    <label for="id_responsavel">
+                        Responsável pelo equipamento
+                    </label>
+
+                    <select
+                        id="id_responsavel"
+                        name="id_responsavel"
+                    >
+
+                        <option value="">
+                            Não atribuído
+                        </option>
+
+                        {% for responsavel in responsaveis %}
+
+                        <option
+                            value="{{ responsavel.id_responsavel }}"
+                            {% if equipamento and equipamento.id_responsavel|string == responsavel.id_responsavel|string %}
+                            selected
+                            {% endif %}
+                        >
+                            {{ responsavel.nome }} - {{ responsavel.setor }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <small class="ajuda-campo">
+                        O setor é identificado automaticamente
+                        pelo responsável selecionado.
+                    </small>
+
+                </div>
+
+                <div class="campo campo-largura-total">
+
+                    <label for="observacoes">
+                        Observações
+                    </label>
+
+                    <textarea
+                        id="observacoes"
+                        name="observacoes"
+                        maxlength="2000"
+                        rows="5"
+                        placeholder="Informações adicionais sobre o equipamento"
+                    >{{ (equipamento.observacoes or '') if equipamento else '' }}</textarea>
+
+                </div>
+
+            </div>
+
+            <div class="acoes-formulario">
+
+                <button type="submit"
+                        class="botao-primario">
+                    Salvar equipamento
+                </button>
+
+                <a href="{{ url_for('consultar') }}"
+                   class="botao-secundario">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

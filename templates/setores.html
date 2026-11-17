@@ -1,0 +1,110 @@
+
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<section class="pagina-administrativa">
+
+    <h1>Cadastro de Setores</h1>
+
+    <p>
+        Cadastre os setores que utilizam
+        equipamentos de TI.
+    </p>
+
+    <div class="painel-formulario">
+
+        <h2>Novo setor</h2>
+
+        {% if erro %}
+        <div class="mensagem-erro" role="alert">
+            {{ erro }}
+        </div>
+        {% endif %}
+
+        {% if sucesso %}
+        <div class="mensagem-sucesso" role="status">
+            {{ sucesso }}
+        </div>
+        {% endif %}
+
+        <form method="POST"
+              action="{{ url_for('cadastrar_setor') }}">
+
+            <div class="campo">
+
+                <label for="nome">
+                    Nome do setor *
+                </label>
+
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    maxlength="100"
+                    placeholder="Ex.: Administrativo"
+                    required
+                >
+
+            </div>
+
+            <div class="acoes-formulario">
+
+                <button
+                    type="submit"
+                    class="botao-primario"
+                >
+                    Cadastrar setor
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="painel-tabela">
+
+        <h2>Setores cadastrados</h2>
+
+        <div class="tabela-rolagem">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Nome do setor</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for setor in setores %}
+
+                    <tr>
+                        <td>{{ setor.id_setor }}</td>
+                        <td>{{ setor.nome }}</td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="2" class="tabela-vazia">
+                            Nenhum setor cadastrado.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

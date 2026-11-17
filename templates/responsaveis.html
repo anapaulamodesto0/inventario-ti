@@ -1,0 +1,146 @@
+
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<section class="pagina-administrativa">
+
+    <h1>Cadastro de Responsáveis</h1>
+
+    <p>
+        Cadastre os colaboradores responsáveis
+        pelos equipamentos.
+    </p>
+
+    <div class="painel-formulario">
+
+        <h2>Novo responsável</h2>
+
+        {% if erro %}
+        <div class="mensagem-erro" role="alert">
+            {{ erro }}
+        </div>
+        {% endif %}
+
+        {% if sucesso %}
+        <div class="mensagem-sucesso" role="status">
+            {{ sucesso }}
+        </div>
+        {% endif %}
+
+        <form
+            method="POST"
+            action="{{ url_for('cadastrar_responsavel') }}"
+        >
+
+            <div class="grade-formulario">
+
+                <div class="campo">
+
+                    <label for="nome">
+                        Nome do responsável *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        maxlength="150"
+                        placeholder="Nome completo"
+                        required
+                    >
+
+                </div>
+
+                <div class="campo">
+
+                    <label for="id_setor">
+                        Setor *
+                    </label>
+
+                    <select
+                        id="id_setor"
+                        name="id_setor"
+                        required
+                    >
+
+                        <option value="">
+                            Selecione um setor
+                        </option>
+
+                        {% for setor in setores %}
+
+                        <option value="{{ setor.id_setor }}">
+                            {{ setor.nome }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="acoes-formulario">
+
+                <button
+                    type="submit"
+                    class="botao-primario"
+                >
+                    Cadastrar responsável
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="painel-tabela">
+
+        <h2>Responsáveis cadastrados</h2>
+
+        <div class="tabela-rolagem">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Setor</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for responsavel in responsaveis %}
+
+                    <tr>
+                        <td>{{ responsavel.id_responsavel }}</td>
+                        <td>{{ responsavel.nome }}</td>
+                        <td>{{ responsavel.setor }}</td>
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="3" class="tabela-vazia">
+                            Nenhum responsável cadastrado.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

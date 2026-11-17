@@ -1,0 +1,180 @@
+
+{% extends "base.html" %}
+
+{% block conteudo %}
+
+<section class="pagina-administrativa">
+
+    <h1>Consulta de Equipamentos</h1>
+
+    <p>
+        Consulte os equipamentos cadastrados
+        utilizando os filtros disponíveis.
+    </p>
+
+    <div class="painel-formulario">
+
+        <h2>Filtros de pesquisa</h2>
+
+        <form method="GET"
+              action="{{ url_for('consultar') }}">
+
+            <div class="filtros-equipamentos">
+
+                <div class="campo">
+                    <label for="setor">Setor</label>
+
+                    <select id="setor" name="setor">
+                        <option value="">Todos os setores</option>
+
+                        {% for setor in setores %}
+
+                        <option
+                            value="{{ setor.nome }}"
+                            {% if setor_selecionado == setor.nome %}
+                            selected
+                            {% endif %}
+                        >
+                            {{ setor.nome }}
+                        </option>
+
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="tipo">Tipo de equipamento</label>
+
+                    <select id="tipo" name="tipo">
+                        <option value="">Todos os tipos</option>
+
+                        {% for item in tipos %}
+
+                        <option
+                            value="{{ item.tipo }}"
+                            {% if tipo_selecionado == item.tipo %}
+                            selected
+                            {% endif %}
+                        >
+                            {{ item.tipo }}
+                        </option>
+
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="acoes-formulario">
+
+                <button type="submit"
+                        class="botao-primario">
+                    Pesquisar
+                </button>
+
+                <a href="{{ url_for('consultar') }}"
+                   class="botao-secundario">
+                    Limpar filtros
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="painel-tabela">
+
+        <div class="cabecalho-tabela">
+
+            <h2>Equipamentos cadastrados</h2>
+
+            <a href="{{ url_for('cadastro') }}"
+               class="botao-primario">
+                Novo equipamento
+            </a>
+
+        </div>
+
+        <div class="tabela-rolagem">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th scope="col">Patrimônio</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Modelo</th>
+                        <th scope="col">Responsável</th>
+                        <th scope="col">Setor</th>
+                        <th scope="col">Data de cadastro</th>
+                        <th scope="col">Observações</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for equipamento in equipamentos %}
+
+                    <tr>
+
+                        <td>{{ equipamento.patrimonio }}</td>
+
+                        <td>{{ equipamento.tipo }}</td>
+
+                        <td>{{ equipamento.modelo }}</td>
+
+                        <td>
+                            {{ equipamento.responsavel or 'Não atribuído' }}
+                        </td>
+
+                        <td>
+                            {{ equipamento.setor or 'Não atribuído' }}
+                        </td>
+
+                        <td>
+                            {{ equipamento.data_cadastro or 'Não registrada' }}
+                        </td>
+
+                        <td class="coluna-observacoes">
+                            {{ equipamento.observacoes or 'Sem observações' }}
+                        </td>
+
+                        <td>
+                            <a
+                                class="link-editar"
+                                href="{{ url_for('editar', id_equipamento=equipamento.id_equipamento) }}"
+                            >
+                                Editar
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="8" class="tabela-vazia">
+                            Nenhum equipamento encontrado.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <p class="total-registros">
+            Total de equipamentos encontrados:
+            {{ equipamentos|length }}
+        </p>
+
+    </div>
+
+</section>
+
+{% endblock %}

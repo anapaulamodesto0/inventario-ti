@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Inventário de TI | Rede Valor</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="sistema">
+
+    <header class="cabecalho">
+
+        <div class="marca">
+            <span class="marca-valor">Valor</span>
+            <span class="marca-titulo">Inventário de TI</span>
+        </div>
+
+        <nav class="menu-principal"
+             aria-label="Menu principal">
+
+            <a href="{{ url_for('inicio') }}">
+                Início
+            </a>
+
+            <div class="menu-grupo">
+                <button
+                    type="button"
+                    class="menu-botao"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                >
+                    Equipamentos
+                </button>
+
+                <div class="submenu">
+                    <a href="{{ url_for('cadastro') }}">
+                        Cadastrar equipamento
+                    </a>
+
+                    <a href="{{ url_for('consultar') }}">
+                        Consultar equipamentos
+                    </a>
+                </div>
+            </div>
+
+            {% if session.get('administrador') %}
+
+            <div class="menu-grupo">
+                <button
+                    type="button"
+                    class="menu-botao"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                >
+                    Administração
+                </button>
+
+                <div class="submenu">
+                    <a href="{{ url_for('cadastrar_setor') }}">
+                        Cadastrar setores
+                    </a>
+
+                    <a href="{{ url_for('cadastrar_responsavel') }}">
+                        Cadastrar responsáveis
+                    </a>
+                </div>
+            </div>
+
+            {% endif %}
+
+        </nav>
+
+        <form method="POST"
+              action="{{ url_for('sair') }}"
+              class="formulario-sair">
+
+            <button type="submit" class="botao-sair">
+                Sair
+            </button>
+        </form>
+
+    </header>
+
+    <main class="conteudo">
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <script>
+        const grupos = document.querySelectorAll(
+            ".menu-grupo"
+        );
+
+        function fecharMenus() {
+            grupos.forEach((grupo) => {
+                grupo.classList.remove("aberto");
+
+                grupo.querySelector(
+                    ".menu-botao"
+                ).setAttribute(
+                    "aria-expanded", "false"
+                );
+            });
+        }
+
+        grupos.forEach((grupo) => {
+            const botao = grupo.querySelector(
+                ".menu-botao"
+            );
+
+            botao.addEventListener("click", () => {
+                const estavaAberto = grupo.classList.contains(
+                    "aberto"
+                );
+
+                fecharMenus();
+
+                if (!estavaAberto) {
+                    grupo.classList.add("aberto");
+
+                    botao.setAttribute(
+                        "aria-expanded", "true"
+                    );
+                }
+            });
+        });
+
+        document.addEventListener("click", (evento) => {
+            if (!evento.target.closest(".menu-grupo")) {
+                fecharMenus();
+            }
+        });
+
+        document.addEventListener("keydown", (evento) => {
+            if (evento.key === "Escape") {
+                fecharMenus();
+            }
+        });
+    </script>
+
+</body>
+</html>
