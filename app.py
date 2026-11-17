@@ -2,6 +2,7 @@
 import os
 import sqlite3
 
+from contextlib import closing
 from datetime import datetime
 from functools import wraps
 from pathlib import Path
@@ -19,7 +20,9 @@ from flask import (
 from werkzeug.security import check_password_hash
 
 
+# ==================================================
 # CONFIGURACAO
+# ==================================================
 
 BASE_DIR = Path(__file__).resolve().parent
 BANCO = BASE_DIR / "inventario.db"
@@ -39,7 +42,9 @@ app.config.update(
 )
 
 
+# ==================================================
 # BANCO DE DADOS
+# ==================================================
 
 def conectar_banco():
     conexao = sqlite3.connect(BANCO)
@@ -49,13 +54,17 @@ def conectar_banco():
 
 
 def buscar_todos(sql, parametros=()):
-    with conectar_banco() as conexao:
-        return conexao.execute(sql, parametros).fetchall()
+    with closing(conectar_banco()) as conexao:
+        return conexao.execute(
+            sql, parametros
+        ).fetchall()
 
 
 def buscar_um(sql, parametros=()):
-    with conectar_banco() as conexao:
-        return conexao.execute(sql, parametros).fetchone()
+    with closing(conectar_banco()) as conexao:
+        return conexao.execute(
+            sql, parametros
+        ).fetchone()
 
 
 def listar_setores():
@@ -79,7 +88,9 @@ def listar_responsaveis():
     )
 
 
+# ==================================================
 # AUTENTICACAO E PERMISSOES
+# ==================================================
 
 def login_obrigatorio(funcao):
     @wraps(funcao)
@@ -163,7 +174,9 @@ def sair():
     return redirect(url_for("login"))
 
 
+# ==================================================
 # PAGINA INICIAL
+# ==================================================
 
 @app.route("/inicio")
 @login_obrigatorio
@@ -171,7 +184,9 @@ def inicio():
     return render_template("inicio.html")
 
 
+# ==================================================
 # CONSULTA DE EQUIPAMENTOS
+# ==================================================
 
 @app.route("/consultar")
 @login_obrigatorio
@@ -232,7 +247,9 @@ def consultar():
     )
 
 
+# ==================================================
 # FORMULARIO DE EQUIPAMENTOS
+# ==================================================
 
 def obter_dados_equipamento():
     campos = (
@@ -303,7 +320,9 @@ def preparar_valores_equipamento(dados):
     )
 
 
+# ==================================================
 # CADASTRAR EQUIPAMENTO
+# ==================================================
 
 @app.route("/cadastro", methods=["GET", "POST"])
 @login_obrigatorio
@@ -314,7 +333,7 @@ def cadastro():
     if request.method == "POST":
         equipamento = obter_dados_equipamento()
 
-        with conectar_banco() as conexao:
+        with closing(conectar_banco()) as conexao:
             erro = validar_equipamento(
                 conexao, equipamento
             )
@@ -367,7 +386,9 @@ def cadastro():
     )
 
 
+# ==================================================
 # EDITAR EQUIPAMENTO
+# ==================================================
 
 @app.route(
     "/editar/<int:id_equipamento>",
@@ -393,7 +414,7 @@ def editar(id_equipamento):
         dados = obter_dados_equipamento()
         dados["id_equipamento"] = id_equipamento
 
-        with conectar_banco() as conexao:
+        with closing(conectar_banco()) as conexao:
             erro = validar_equipamento(conexao, dados)
 
             if not erro:
@@ -437,7 +458,9 @@ def editar(id_equipamento):
     )
 
 
+# ==================================================
 # ADMINISTRACAO DE SETORES
+# ==================================================
 
 @app.route("/admin/setores", methods=["GET", "POST"])
 @admin_obrigatorio
@@ -455,12 +478,13 @@ def cadastrar_setor():
             erro = "O nome deve ter ate 100 caracteres."
 
         else:
-            with conectar_banco() as conexao:
+            with closing(conectar_banco()) as conexao:
                 try:
                     conexao.execute(
                         "INSERT INTO setores (nome) VALUES (?)",
                         (nome,)
                     )
+
                     conexao.commit()
                     sucesso = "Setor cadastrado com sucesso."
 
@@ -476,7 +500,9 @@ def cadastrar_setor():
     )
 
 
+# ==================================================
 # ADMINISTRACAO DE RESPONSAVEIS
+# ==================================================
 
 @app.route(
     "/admin/responsaveis",
@@ -489,6 +515,7 @@ def cadastrar_responsavel():
 
     if request.method == "POST":
         nome = request.form.get("nome", "").strip()
+
         id_setor = request.form.get(
             "id_setor", ""
         ).strip()
@@ -516,7 +543,7 @@ def cadastrar_responsavel():
                 erro = "O setor selecionado nao existe."
 
             else:
-                with conectar_banco() as conexao:
+                with closing(conectar_banco()) as conexao:
                     try:
                         conexao.execute(
                             """
@@ -555,7 +582,9 @@ def cadastrar_responsavel():
     )
 
 
+# ==================================================
 # INICIALIZACAO
+# ==================================================
 
 if __name__ == "__main__":
     app.run(debug=True)
