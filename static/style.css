@@ -593,3 +593,107 @@ button:focus-visible {
         padding: 28px 22px;
     }
 }
+
+
+/* BOTAO DE ACESSIBILIDADE */
+.botao-contraste {
+    flex-shrink: 0;
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 2px solid var(--cor-primaria);
+    border-radius: 6px;
+    background: var(--cor-superficie);
+    color: var(--cor-primaria);
+    font-size: 14px;
+    font-weight: 700;
+}
+.botao-contraste:hover { background: var(--cor-fundo); }
+
+/* ALTO CONTRASTE: aplicado ao elemento html pelo base.html */
+html.alto-contraste {
+    --cor-primaria: #ffeb3b;
+    --cor-primaria-hover: #fff59d;
+    --cor-fundo: #000000;
+    --cor-superficie: #101010;
+    --cor-texto: #ffffff;
+    --cor-texto-secundario: #f1f1f1;
+    --cor-borda: #ffffff;
+    --cor-borda-campo: #ffffff;
+    --sombra-painel: none;
+    color-scheme: dark;
+}
+html.alto-contraste body,
+html.alto-contraste .cabecalho,
+html.alto-contraste .painel-formulario,
+html.alto-contraste .painel-tabela,
+html.alto-contraste .cartao-login,
+html.alto-contraste .submenu {
+    background: var(--cor-superficie);
+    color: var(--cor-texto);
+    border-color: var(--cor-borda);
+    box-shadow: none;
+}
+html.alto-contraste body { background: var(--cor-fundo); }
+html.alto-contraste .marca-valor {
+    background: var(--cor-primaria);
+    color: #000;
+}
+html.alto-contraste .menu-principal > a,
+html.alto-contraste .menu-botao,
+html.alto-contraste .submenu a,
+html.alto-contraste .campo label,
+html.alto-contraste .botao-sair,
+html.alto-contraste .botao-secundario,
+html.alto-contraste .tabela-rolagem th,
+html.alto-contraste .tabela-rolagem td {
+    color: var(--cor-texto);
+}
+html.alto-contraste .menu-principal > a:hover,
+html.alto-contraste .menu-botao:hover,
+html.alto-contraste .menu-grupo.aberto .menu-botao,
+html.alto-contraste .submenu a:hover,
+html.alto-contraste .submenu a:focus-visible,
+html.alto-contraste .tabela-rolagem tbody tr:hover td {
+    background: #292929;
+    color: var(--cor-primaria);
+}
+html.alto-contraste .campo input,
+html.alto-contraste .campo select,
+html.alto-contraste .campo textarea,
+html.alto-contraste .botao-sair,
+html.alto-contraste .botao-secundario {
+    background: #000;
+    color: #fff;
+    border: 2px solid #fff;
+}
+html.alto-contraste .campo input::placeholder,
+html.alto-contraste .campo textarea::placeholder { color: #ddd; opacity: 1; }
+html.alto-contraste .botao-primario,
+html.alto-contraste .botao-contraste {
+    background: var(--cor-primaria);
+    color: #000;
+    border: 2px solid var(--cor-primaria);
+}
+html.alto-contraste .botao-primario:hover,
+html.alto-contraste .botao-contraste:hover {
+    background: var(--cor-primaria-hover);
+    color: #000;
+}
+html.alto-contraste .tabela-rolagem th { background: #222; }
+html.alto-contraste .tabela-rolagem th,
+html.alto-contraste .tabela-rolagem td { border-bottom: 1px solid #fff; }
+html.alto-contraste .link-editar { color: var(--cor-primaria); text-decoration: underline; }
+html.alto-contraste .mensagem-erro,
+html.alto-contraste .mensagem-sucesso {
+    background: #111;
+    color: #fff;
+    border: 2px solid #fff;
+}
+html.alto-contraste :is(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid #ffeb3b;
+    outline-offset: 3px;
+}
+@media (max-width: 950px) {
+    .botao-contraste { margin-left: auto; }
+    .formulario-sair { margin-left: 0; }
+}
