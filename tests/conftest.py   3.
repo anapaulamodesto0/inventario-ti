@@ -3,20 +3,25 @@ import sqlite3
 from contextlib import closing
 
 import pytest
+
 import app as modulo_app
 
 
 @pytest.fixture
 def banco_temporario(tmp_path, monkeypatch):
-    # Criar um banco exclusivo para o teste
     caminho = tmp_path / "inventario_teste.db"
 
-    # Redirecionar a aplicacao para o banco temporario
-    monkeypatch.setattr(modulo_app, "BANCO", caminho)
+    monkeypatch.setattr(
+        modulo_app,
+        "BANCO",
+        caminho
+    )
 
-    # Criar as tabelas do banco de testes
     with closing(sqlite3.connect(caminho)) as conexao:
-        conexao.executescript("""
+        conexao.execute("PRAGMA foreign_keys = ON")
+
+        conexao.executescript(
+            """
             CREATE TABLE usuarios (
                 id_usuario INTEGER PRIMARY KEY,
                 nome TEXT NOT NULL,
@@ -34,7 +39,9 @@ def banco_temporario(tmp_path, monkeypatch):
                 id_responsavel INTEGER PRIMARY KEY,
                 nome TEXT NOT NULL,
                 setor TEXT NOT NULL,
-                id_setor INTEGER REFERENCES setores(id_setor)
+                id_setor INTEGER,
+                FOREIGN KEY (id_setor)
+                    REFERENCES setores(id_setor)
             );
 
             CREATE TABLE equipamentos (
@@ -43,12 +50,14 @@ def banco_temporario(tmp_path, monkeypatch):
                 tipo TEXT NOT NULL,
                 modelo TEXT NOT NULL,
                 numero_serie TEXT,
-                id_responsavel INTEGER
-                    REFERENCES responsaveis(id_responsavel),
-                id_usuario INTEGER NOT NULL
-                    REFERENCES usuarios(id_usuario),
+                id_responsavel INTEGER,
+                id_usuario INTEGER NOT NULL,
                 observacoes TEXT,
-                data_cadastro TEXT
+                data_cadastro TEXT,
+                FOREIGN KEY (id_responsavel)
+                    REFERENCES responsaveis(id_responsavel),
+                FOREIGN KEY (id_usuario)
+                    REFERENCES usuarios(id_usuario)
             );
 
             INSERT INTO usuarios (
@@ -70,10 +79,7 @@ def banco_temporario(tmp_path, monkeypatch):
                 id_setor,
                 nome
             )
-            VALUES (
-                1,
-                'TI'
-            );
+            VALUES (1, 'TI');
 
             INSERT INTO responsaveis (
                 id_responsavel,
@@ -87,10 +93,10 @@ def banco_temporario(tmp_path, monkeypatch):
                 'TI',
                 1
             );
-        """)
+            """
+        )
 
         conexao.commit()
 
-    # Retornar o caminho do banco temporario
     return caminho
 
