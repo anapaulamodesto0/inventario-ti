@@ -11,6 +11,17 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <script>
+        // Aplicar a preferência antes de exibir a página.
+        try {
+            if (localStorage.getItem("altoContraste") === "ativo") {
+                document.documentElement.classList.add("alto-contraste");
+            }
+        } catch (erro) {
+            console.warn("Preferência de contraste indisponível.");
+        }
+    </script>
 </head>
 
 <body class="sistema">
@@ -77,6 +88,17 @@
 
         </nav>
 
+        <!-- Recurso de acessibilidade -->
+        <button
+            type="button"
+            id="alternar-contraste"
+            class="botao-contraste"
+            aria-pressed="false"
+            aria-label="Ativar modo de alto contraste"
+        >
+            Alto contraste
+        </button>
+
         <form method="POST"
               action="{{ url_for('sair') }}"
               class="formulario-sair">
@@ -93,40 +115,29 @@
     </main>
 
     <script>
-        const grupos = document.querySelectorAll(
-            ".menu-grupo"
-        );
+        // Controle dos menus.
+        const grupos = document.querySelectorAll(".menu-grupo");
 
         function fecharMenus() {
             grupos.forEach((grupo) => {
                 grupo.classList.remove("aberto");
 
-                grupo.querySelector(
-                    ".menu-botao"
-                ).setAttribute(
-                    "aria-expanded", "false"
-                );
+                grupo.querySelector(".menu-botao")
+                    .setAttribute("aria-expanded", "false");
             });
         }
 
         grupos.forEach((grupo) => {
-            const botao = grupo.querySelector(
-                ".menu-botao"
-            );
+            const botao = grupo.querySelector(".menu-botao");
 
             botao.addEventListener("click", () => {
-                const estavaAberto = grupo.classList.contains(
-                    "aberto"
-                );
+                const estavaAberto = grupo.classList.contains("aberto");
 
                 fecharMenus();
 
                 if (!estavaAberto) {
                     grupo.classList.add("aberto");
-
-                    botao.setAttribute(
-                        "aria-expanded", "true"
-                    );
+                    botao.setAttribute("aria-expanded", "true");
                 }
             });
         });
@@ -142,7 +153,54 @@
                 fecharMenus();
             }
         });
+
+        // Controle do modo de alto contraste.
+        const botaoContraste = document.getElementById(
+            "alternar-contraste"
+        );
+
+        function atualizarBotaoContraste() {
+            const ativo = document.documentElement.classList.contains(
+                "alto-contraste"
+            );
+
+            botaoContraste.setAttribute(
+                "aria-pressed",
+                String(ativo)
+            );
+
+            botaoContraste.setAttribute(
+                "aria-label",
+                ativo
+                    ? "Desativar modo de alto contraste"
+                    : "Ativar modo de alto contraste"
+            );
+
+            botaoContraste.textContent = ativo
+                ? "Contraste normal"
+                : "Alto contraste";
+        }
+
+        atualizarBotaoContraste();
+
+        botaoContraste.addEventListener("click", () => {
+            const ativo = document.documentElement.classList.toggle(
+                "alto-contraste"
+            );
+
+            try {
+                localStorage.setItem(
+                    "altoContraste",
+                    ativo ? "ativo" : "inativo"
+                );
+            } catch (erro) {
+                console.warn("Não foi possível salvar a preferência.");
+            }
+
+            atualizarBotaoContraste();
+        });
     </script>
 
 </body>
 </html>
+
